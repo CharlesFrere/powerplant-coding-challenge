@@ -51,5 +51,18 @@ def test_production_plan_golden(client):
     assert actual_response == expected_response
 
 
+@pytest.mark.parametrize("payload_file", ["payload2.json", "payload2.json", "payload3.json"])
+def test_sum_of_the_power_produced_by_all_powerplants_should_equal_the_load(client, payload_file):
+    payload_path = os.path.join(os.path.dirname(__file__), '..', 'example_payloads', payload_file)
+
+    with open(payload_path, 'r') as file:
+        payload = json.load(file)
+
+    response = client.post('/productionplan', json=payload)
+    logger.info(f"Response: {response.get_json()}")
+    data = response.get_json()
+    assert payload['load'] == sum([plant['p'] for plant in data])
+
+
 if __name__ == '__main__':
     pass
