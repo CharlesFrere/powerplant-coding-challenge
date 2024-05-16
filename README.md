@@ -78,7 +78,7 @@ Once this is done, you can run the application locally by executing the main scr
 python src/main.py
 ```
 
-For the dunamic programming approach: 
+For the dynamic programming approach: 
 
 Execute 
 ```bash
