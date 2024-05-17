@@ -120,13 +120,9 @@ Feel free to provide different input files to the API to check results.
 curl -X POST -H "Content-Type: application/json" -d @example_payloads/payload3.json http://0.0.0.0:8888/productionplan
 ```
 
+Test the API via the swagger UI by connecting to http://localhost:8888/apidocs
+
 ## Bonus: Consider CO_2 emissions
 
-If you want to consider the cost of CO_2 emissions for the gaz powered plants, set the global variable
-CONSIDER_CO2_EMISSIONS to True and relaunch the app. 
-
-
-## Improving points
-
-2. Propose an interface to ask the user if he wants to take CO_2 cost into account without changing code. 
-3. Add a swagger UI for the user to visually interact with the API. 
+You can also consider co2 emissions in the computation by setting a positive value for "co2_cost" in the payload file. 
+The updated costs will be computed 
