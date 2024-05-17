@@ -1,17 +1,22 @@
 from flask import Flask, request, jsonify
 import numpy as np
+from flasgger import Swagger, swag_from
+import os
+import yaml
 
 app = Flask(__name__)
 
-CONSIDER_CO2_EMISSIONS = False
-# You can change this variable according to the cost ou tCO2 you want to consider
-CO2_COST = 7 if CONSIDER_CO2_EMISSIONS else 0
+with open(os.path.join(os.path.dirname(__file__), '../swagger_spec.yml')) as f:
+    swagger_spec = yaml.safe_load(f)
+swagger = Swagger(app, template=swagger_spec)
 
 
 @app.route('/productionplan', methods=['POST'])
+@swag_from(os.path.join(os.path.dirname(__file__), '../swagger_spec.yml'))
 def production_plan():
     data = request.json
     load = data['load']
+    co2_cost = data.get('co2_cost', 0)
     fuels = data['fuels']
     powerplants = data['powerplants']
 
@@ -21,7 +26,7 @@ def production_plan():
             plant['cost'] = 0
             plant['pmax'] = plant['pmax'] * (fuels['wind(%)'] / 100)
         elif plant['type'] == 'gasfired':
-            plant['cost'] = (fuels['gas(euro/MWh)'] + CO2_COST) / plant['efficiency']
+            plant['cost'] = (fuels['gas(euro/MWh)'] + co2_cost) / plant['efficiency']
         elif plant['type'] == 'turbojet':
             plant['cost'] = fuels['kerosine(euro/MWh)'] / plant['efficiency']
 
@@ -57,7 +62,7 @@ def production_plan():
         if p == -1:
             result.append({"name": powerplants[i - 1]['name'], "p": 0})
         else:
-            result.append({"name": powerplants[i - 1]['name'], "p": p / precision})
+            result.append({"name": powerplants[i - 1]['name'], "p": round(p / precision, 1)})
             remaining_load -= p
 
     result.reverse()

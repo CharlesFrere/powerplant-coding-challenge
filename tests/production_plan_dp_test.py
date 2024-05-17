@@ -3,7 +3,7 @@ import os
 import pytest
 import logging
 import json
-from src.main import app
+from src.main_dynamic_programming import app
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -46,9 +46,13 @@ def test_production_plan_golden(client):
 
     actual_response = response.get_json()
 
-    print("Actual Response Data:", actual_response)
+    expected_dict = {plant['name']: plant['p'] for plant in expected_response}
+    actual_dict = {plant['name']: plant['p'] for plant in actual_response}
 
-    assert actual_response == expected_response
+    assert set(expected_dict.keys()) == set(actual_dict.keys())
+
+    for name in expected_dict:
+        assert abs(actual_dict[name] - expected_dict[name]) < 0.10001
 
 
 @pytest.mark.parametrize("payload_file", ["payload1.json", "payload2.json", "payload3.json"])

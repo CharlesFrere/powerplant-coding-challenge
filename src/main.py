@@ -46,7 +46,7 @@ def production_plan():
 
     # Ensure no overproduction and correct allocation
     if remaining_load > 0:
-        for plant in reversed(result):
+        for plant in result:
             if plant['p'] < [p['pmax'] for p in powerplants if p['name'] == plant['name']][0]:
                 plant['p'] = round(plant['p'] + remaining_load, 1)
                 break
