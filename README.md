@@ -13,10 +13,11 @@ load while minimizing costs. The algorithm considers various factors such as fue
 
 ## Algorithms Explanation
 
-### First algorithm
 
 I implemented 2 algorithms. I first came with a straitforward idea of a first alorithm in continuous case:
 
+
+### First algorithm
 
 The objective is to match the energy demand (load) by minimizing the cost.
 The algorithm uses a merit-order dispatch approach:
@@ -26,24 +27,27 @@ The algorithm uses a merit-order dispatch approach:
 4. **Constraints Handling**: Minimum and maximum generation constraints for each plant are respected during the load distribution.
 
 ### Second algirithm
+
 Then I realised that in some cases like payload2.json, the given result was not the optimal 
-production to minimize the cost. Here is why I thought about a linar programming approach. 
+production to minimize the cost. Here is why I thought about a dynamic programming approach. 
 
 
 To achieve decimal precision, I had to scale the discrete problem to a factor 10. 
 This way we can solve the problem in a dynamic programming way with values of p precise at +- 0.1 MWh
 
-The optimisation problem would would of course have been easily solved using scipy.optimize.linprog in continuous cases
+The optimisation problem would of course have been easily solved using scipy.optimize.linprog in continuous cases
 but this algorithm reaches a decent precision without using external libraries. 
 
 1. Precision Handling: The load and power values are scaled to integers to manage decimal precision.
-2. DP Table Initialization: The DP table (dp) is initialized with infinity, and dp[0][0] is set to 0.
+2. DP Table Initialization: The DP table (dp) is initialized with infinity, and **dp[0][0]** is set to 0.
 3. Filling the DP Table:
    - Iterate through each power plant.
    - For each possible load value, update the DP table by considering the cost of producing each power value within the plant's range.
 4. Backtracking:
    - Determine the optimal power distribution by backtracking through the DP table.
    - Ensure the power values are scaled back to their original precision.
+
+The principal downside of this second algorithm is that it is way slower than the first one.
 
 ## Deployment Instructions
 
